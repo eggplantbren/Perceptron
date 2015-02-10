@@ -12,10 +12,10 @@ MyModel::MyModel()
 ,weights()
 {
 	// Input layer
-	num_neurons[0] = 100;
+	num_neurons[0] = 1;
 
 	// Hidden layer
-	num_neurons[1] = 10;
+	num_neurons[1] = 100;
 
 	// Output layer
 	num_neurons[2] = 1;
@@ -62,7 +62,7 @@ vector<double> MyModel::compute_output(const vector<double>& input) const
 		{
 			for(int k=0; k<num_neurons[i-1]; k++)
 				output[i][j] += components[j*num_neurons[i-1] + k][0]*output[i-1][k];
-			output[i][j] = tanh(output[i][j]);
+			output[i][j] = 1./(1. + exp(-output[i][j]));
 		}
 	}
 
@@ -71,13 +71,14 @@ vector<double> MyModel::compute_output(const vector<double>& input) const
 
 void MyModel::print(std::ostream& out) const
 {
-	vector<double> input(101);
-	for(int i=0; i<101; i++)
-		input[i] = 0.01*i;
+	vector<double> x(1);
+	for(int i=0; i<201; i++)
+	{
+		x[0] = 0.01*i;
 
-	vector<double> output = compute_output(input);
-	for(size_t i=0; i<output.size(); i++)
-		out<<output[i]<<' ';
+		vector<double> output = compute_output(x);
+		out<<output[0]<<' ';
+	}
 }
 
 string MyModel::description() const
