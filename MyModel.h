@@ -28,7 +28,7 @@
 class MyModel:public DNest3::Model
 {
 	private:
-		RJObject<MyDistribution> weights;
+		std::vector< RJObject<MyDistribution> > weights;
 
 	public:
 		MyModel();
