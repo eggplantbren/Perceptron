@@ -22,10 +22,13 @@
 
 #include "Model.h"
 #include <vector>
+#include "MyDistribution.h"
+#include "RJObject.h"
 
 class MyModel:public DNest3::Model
 {
 	private:
+		RJObject<MyDistribution> weights;
 
 	public:
 		MyModel();

@@ -7,18 +7,23 @@ using namespace std;
 using namespace DNest3;
 
 MyModel::MyModel()
+:weights(1, 100, true, MyDistribution())
 {
 
 }
 
 void MyModel::fromPrior()
 {
-
+	weights.fromPrior();
 }
 
 double MyModel::perturb()
 {
-	return 0.;
+	double logH = 0.;
+
+	logH += weights.perturb();
+
+	return logH;
 }
 
 double MyModel::logLikelihood() const
@@ -28,7 +33,7 @@ double MyModel::logLikelihood() const
 
 void MyModel::print(std::ostream& out) const
 {
-
+	weights.print(out);
 }
 
 string MyModel::description() const
