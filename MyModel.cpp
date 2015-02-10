@@ -12,7 +12,7 @@ MyModel::MyModel()
 ,weights()
 {
 	// Input layer
-	num_neurons[0] = 1;
+	num_neurons[0] = 100;
 
 	// Hidden layer
 	num_neurons[1] = 10;
@@ -48,14 +48,36 @@ double MyModel::logLikelihood() const
 
 vector<double> MyModel::compute_output(const vector<double>& input) const
 {
-	return vector<double>();
+	vector< vector<double> > output(num_layers);
+	output[0] = input;
+
+	// Compute each layer (except input layer)
+	for(int i=1; i<num_layers; i++)
+	{
+		const vector< vector<double> >& components = weights[i-1].get_components();
+
+		// Calculate activations for this layer
+		output[i].assign(num_neurons[i], 0.);
+		for(int j=0; j<num_neurons[i]; j++)
+		{
+			for(int k=0; k<num_neurons[i-1]; k++)
+				output[i][j] += components[j*num_neurons[i-1] + k][0]*output[i-1][k];
+			output[i][j] = tanh(output[i][j]);
+		}
+	}
+
+	return output.back();
 }
 
 void MyModel::print(std::ostream& out) const
 {
-	// Activity
+	vector<double> input(101);
+	for(int i=0; i<101; i++)
+		input[i] = 0.01*i;
 
-//	weights.print(out);
+	vector<double> output = compute_output(input);
+	for(size_t i=0; i<output.size(); i++)
+		out<<output[i]<<' ';
 }
 
 string MyModel::description() const
