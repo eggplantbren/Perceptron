@@ -26,6 +26,10 @@ MyModel::MyModel()
 
 void MyModel::fromPrior()
 {
+	for(size_t i=0; i<weights.size(); i++)
+		weights[i].fromPrior();
+	for(size_t i=0; i<biases.size(); i++)
+		biases[i].fromPrior();
 
 }
 
