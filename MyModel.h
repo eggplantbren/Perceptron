@@ -25,10 +25,16 @@
 #include "RJObject.h"
 #include <Eigen/Dense>
 
+typedef Eigen::VectorXd Vector;
+typedef Eigen::MatrixXd Matrix;
+
 class MyModel:public DNest3::Model
 {
 	private:
+		std::vector<int> num_neurons;
 
+		std::vector< RJObject<MyDistribution> > weights;
+		std::vector< RJObject<MyDistribution> > biases;
 
 	public:
 		MyModel();
