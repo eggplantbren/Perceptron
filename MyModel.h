@@ -23,10 +23,7 @@
 #include "Model.h"
 #include "MyDistribution.h"
 #include "RJObject.h"
-#include <Eigen/Dense>
-
-typedef Eigen::VectorXd Vector;
-typedef Eigen::MatrixXd Matrix;
+#include "Data.h"
 
 class MyModel:public DNest3::Model
 {

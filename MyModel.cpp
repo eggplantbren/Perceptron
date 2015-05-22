@@ -30,19 +30,26 @@ void MyModel::fromPrior()
 		weights[i].fromPrior();
 	for(size_t i=0; i<biases.size(); i++)
 		biases[i].fromPrior();
-
 }
 
 double MyModel::perturb()
 {
 	double logH = 0.;
 
+	int which = randInt(2);
+	if(which == 0)
+		logH += weights[randInt(weights.size())].perturb();
+	else
+		logH += biases[randInt(biases.size())].perturb();
+
 	return logH;
 }
 
 double MyModel::logLikelihood() const
 {
-	return 0.;
+	double logL = 0.;
+
+	return logL;
 }
 
 void MyModel::print(std::ostream& out) const

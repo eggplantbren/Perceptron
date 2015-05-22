@@ -1,9 +1,16 @@
 #ifndef _Data_
 #define _Data_
 
+#include <Eigen/Dense>
+
+
+typedef Eigen::VectorXd Vector;
+typedef Eigen::MatrixXd Matrix;
+
 class Data
 {
 	private:
+		
 
 	public:
 		Data();
