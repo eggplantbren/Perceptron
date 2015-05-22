@@ -21,23 +21,14 @@
 #define _MyModel_
 
 #include "Model.h"
-#include <vector>
 #include "MyDistribution.h"
 #include "RJObject.h"
+#include <Eigen/Dense>
 
 class MyModel:public DNest3::Model
 {
 	private:
-		// Number of layers
-		int num_layers;
 
-		// Number of neurons in each layer
-		std::vector<int> num_neurons;
-
-		std::vector< RJObject<MyDistribution> > weights;
-
-		std::vector<double> compute_output
-			(const std::vector<double>& input) const;
 
 	public:
 		MyModel();
