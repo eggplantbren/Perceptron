@@ -19,6 +19,12 @@ class Data
 		Data();
 		void load(const char* filename);
 
+		// Getters
+		const std::vector<Vector>& get_inputs() const
+		{ return inputs; }
+		const std::vector<Vector>& get_outputs() const
+		{ return outputs; }
+
 	// Singleton
 	private:
 		static Data instance;

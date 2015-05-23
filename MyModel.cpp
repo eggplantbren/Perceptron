@@ -45,6 +45,40 @@ double MyModel::perturb()
 	return logH;
 }
 
+Vector MyModel::calculate_output(const Vector& input) const
+{
+	Vector result;
+
+	// Loop over layers
+	for(size_t i=0; i<num_neurons.size()-1; i++)
+	{
+		// Reshape the weights into a matrix
+		Matrix M(num_neurons[i+1], num_neurons[i]);
+		const vector< vector<double> >& components = 
+			weights[i].get_components();
+		int k = 0;
+		for(int m=0; m<num_neurons[i+1]; m++)
+			for(int n=0; n<num_neurons[i]; n++)
+				M(m, n) = components[k++][0];
+		// Reshape the biases into a vector
+		Vector b(num_neurons[i+1]);
+		const vector< vector<double> >& components2 =
+			biases[i].get_components();
+		for(int m=0; m<num_neurons[i+1]; m++)
+			b(i) = components2[i][0];
+
+		// Compute the next layer
+		// Linear part
+		result = M*input + b;
+		// Nonlinear part (not applied to last step)
+		if(i != (int)num_neurons.size() - 2)
+			for(int m=0; m<result.size(); m++)
+				result(i) = tanh(result(i));
+	}
+
+	return result;
+}
+
 double MyModel::logLikelihood() const
 {
 	double logL = 0.;
