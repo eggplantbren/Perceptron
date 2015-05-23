@@ -33,6 +33,8 @@ class MyModel:public DNest3::Model
 		std::vector< RJObject<MyDistribution> > weights;
 		std::vector< RJObject<MyDistribution> > biases;
 
+		double sigma;
+
 		Vector calculate_output(const Vector& input) const;
 
 	public:

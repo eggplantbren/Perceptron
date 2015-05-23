@@ -30,17 +30,27 @@ void MyModel::fromPrior()
 		weights[i].fromPrior();
 	for(size_t i=0; i<biases.size(); i++)
 		biases[i].fromPrior();
+	sigma = exp(tan(M_PI*(0.97*randomU() - 0.485)));
 }
 
 double MyModel::perturb()
 {
 	double logH = 0.;
 
-	int which = randInt(2);
+	int which = randInt(3);
 	if(which == 0)
 		logH += weights[randInt(weights.size())].perturb();
-	else
+	else if(which == 1)
 		logH += biases[randInt(biases.size())].perturb();
+	else
+	{
+		sigma = log(sigma);
+		sigma = (atan(sigma)/M_PI + 0.485)/0.97;
+		sigma += randh();
+		wrap(sigma, 0., 1.);
+		sigma = tan(M_PI*(0.97*sigma - 0.485));
+		sigma = exp(sigma);
+	}
 
 	return logH;
 }
@@ -71,7 +81,7 @@ Vector MyModel::calculate_output(const Vector& input) const
 		// Linear part
 		result = M*input + b;
 		// Nonlinear part (not applied to last step)
-		if(i != (int)num_neurons.size() - 2)
+		if(i != num_neurons.size() - 2)
 			for(int m=0; m<result.size(); m++)
 				result(i) = tanh(result(i));
 	}
@@ -82,6 +92,21 @@ Vector MyModel::calculate_output(const Vector& input) const
 double MyModel::logLikelihood() const
 {
 	double logL = 0.;
+
+	// Get the data
+	const vector<Vector>& inputs = Data::get_instance().get_inputs();
+	const vector<Vector>& outputs = Data::get_instance().get_outputs();
+
+	Vector output;
+	for(size_t i=0; i<inputs.size(); i++)
+	{
+		output = calculate_output(inputs[i]);
+		for(int j=0; j<output.size(); j++)
+		{
+			logL += -log(sigma) -
+				0.5*pow((outputs[i](j) - output(j))/sigma, 2);
+		}
+	}
 
 	return logL;
 }
