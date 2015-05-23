@@ -116,6 +116,11 @@ double MyModel::logLikelihood() const
 
 void MyModel::print(std::ostream& out) const
 {
+	Vector input(2);
+	input(0) = 200.;
+	input(1) = 15.;
+	Vector output = calculate_output(input);
+	out<<(output(0) + sigma*randn())<<' '<<0<<endl;
 }
 
 string MyModel::description() const
