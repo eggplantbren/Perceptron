@@ -13,13 +13,13 @@ MyModel::MyModel()
 	num_neurons[1] = 5;
 	num_neurons[2] = 1;
 
-	for(size_t i=0; i<num_neurons.size(); i++)
+	for(size_t i=0; i<num_neurons.size()-1; i++)
 	{
 		weights.push_back(RJObject<MyDistribution>(1,
-					num_neurons[i-1]*num_neurons[i],
+					num_neurons[i]*num_neurons[i+1],
 					true, MyDistribution()));
 		biases.push_back(RJObject<MyDistribution>(1,
-					num_neurons[i],
+					num_neurons[i+1],
 					true, MyDistribution()));
 	}
 }
@@ -57,7 +57,7 @@ double MyModel::perturb()
 
 Vector MyModel::calculate_output(const Vector& input) const
 {
-	Vector result;
+	Vector result = input;
 
 	// Loop over layers
 	for(size_t i=0; i<num_neurons.size()-1; i++)
@@ -70,20 +70,23 @@ Vector MyModel::calculate_output(const Vector& input) const
 		for(int m=0; m<num_neurons[i+1]; m++)
 			for(int n=0; n<num_neurons[i]; n++)
 				M(m, n) = components[k++][0];
+
 		// Reshape the biases into a vector
 		Vector b(num_neurons[i+1]);
+
 		const vector< vector<double> >& components2 =
 			biases[i].get_components();
 		for(int m=0; m<num_neurons[i+1]; m++)
-			b(i) = components2[i][0];
+			b(m) = components2[m][0];
 
 		// Compute the next layer
 		// Linear part
-		result = M*input + b;
+		result = M*result + b;
+
 		// Nonlinear part (not applied to last step)
-		if(i != num_neurons.size() - 2)
+		if((int)i != (int)num_neurons.size() - 2)
 			for(int m=0; m<result.size(); m++)
-				result(i) = tanh(result(i));
+				result(m) = tanh(result(m));
 	}
 
 	return result;
