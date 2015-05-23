@@ -9,9 +9,9 @@ using namespace DNest3;
 MyModel::MyModel()
 :num_neurons(3)
 {
-	num_neurons[0] = 2;
+	num_neurons[0] = Data::get_instance().get_inputs()[0].size();
 	num_neurons[1] = 5;
-	num_neurons[2] = 1;
+	num_neurons[2] = Data::get_instance().get_outputs()[0].size();
 
 	for(size_t i=0; i<num_neurons.size()-1; i++)
 	{
