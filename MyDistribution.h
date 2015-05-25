@@ -6,7 +6,7 @@
 class MyDistribution:public Distribution
 {
 	private:
-		double sigma;
+		double mu, sigma, nu;
 
 		double perturb_parameters();
 
