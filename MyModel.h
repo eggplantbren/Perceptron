@@ -1,53 +1,28 @@
-/*
-* Copyright (c) 2009, 2010, 2011, 2012 Brendon J. Brewer.
-*
-* This file is part of DNest3.
-*
-* DNest3 is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* DNest3 is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with DNest3. If not, see <http://www.gnu.org/licenses/>.
-*/
+#ifndef Perceptron_MyModel
+#define Perceptron_MyModel
 
-#ifndef _MyModel_
-#define _MyModel_
-
-#include "Model.h"
-#include "MyDistribution.h"
-#include "RJObject.h"
+#include "MyConditionalPrior.h"
 #include "Data.h"
+#include "DNest4/code/DNest4.h"
 
-class MyModel:public DNest3::Model
+class MyModel
 {
 	private:
-		std::vector<int> num_neurons;
 
-		std::vector< RJObject<MyDistribution> > weights;
-		std::vector< RJObject<MyDistribution> > biases;
-
-		double sigma;
-
-		Vector calculate_output(const Vector& input) const;
+        std::vector<double> calculate_output
+                (const std::vector<double>& input) const;
 
 	public:
 		MyModel();
 
 		// Generate the point from the prior
-		void fromPrior();
+		void from_prior(DNest4::RNG& rng);
 
 		// Metropolis-Hastings proposals
-		double perturb();
+		double perturb(DNest4::RNG& rng);
 
 		// Likelihood function
-		double logLikelihood() const;
+		double log_likelihood() const;
 
 		// Print to stream
 		void print(std::ostream& out) const;
