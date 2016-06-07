@@ -49,7 +49,7 @@ void MyModel::make_weights_matrix()
     const auto& components = weights.get_components();
     int k = 0;
     for(int i=0; i<Data::get_instance().get_dim_outputs(); ++i)
-        for(int j=0; j<Data::get_instance().get_dim_outputs(); ++j)
+        for(int j=0; j<Data::get_instance().get_dim_inputs(); ++j)
             weights_matrix(i, j) = components[k++][0];
 }
 
