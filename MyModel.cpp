@@ -73,10 +73,16 @@ double MyModel::log_likelihood() const
 void MyModel::print(std::ostream& out) const
 {
     weights.print(out);
+    out<<sigma<<' ';
 }
 
 Vector MyModel::calculate_output(const Vector& input) const
 {
     return weights_matrix*input;
+}
+
+std::string MyModel::description() const
+{
+    return std::string("");
 }
 
