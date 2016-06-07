@@ -6,9 +6,6 @@
 class MyConditionalPrior:public DNest4::ConditionalPrior
 {
 	private:
-        static const DNest4::Cauchy c;
-
-        double center, width;
 
 		double perturb_hyperparameters(DNest4::RNG& rng);
 

@@ -9,9 +9,11 @@ class MyModel
 {
 	private:
         DNest4::RJObject<MyConditionalPrior> weights;
+        Matrix weights_matrix;
 
-        std::vector<double> calculate_output
-                (const std::vector<double>& input) const;
+        void make_weights_matrix();
+
+        Vector calculate_output(const Vector& input) const;
 
 	public:
         // Constructor
