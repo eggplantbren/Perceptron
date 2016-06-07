@@ -24,6 +24,10 @@ class Data
 		{ return inputs; }
 		const std::vector<Vector>& get_outputs() const
 		{ return outputs; }
+        int get_dim_inputs() const
+        { return dim_inputs; }
+        int get_dim_outputs() const
+        { return dim_outputs; }
 
 	// Singleton
 	private:

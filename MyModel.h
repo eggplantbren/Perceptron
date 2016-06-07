@@ -8,11 +8,13 @@
 class MyModel
 {
 	private:
+        DNest4::RJObject<MyConditionalPrior> weights;
 
         std::vector<double> calculate_output
                 (const std::vector<double>& input) const;
 
 	public:
+        // Constructor
 		MyModel();
 
 		// Generate the point from the prior
