@@ -8,11 +8,14 @@
 class MyModel
 {
 	private:
+        static const DNest4::Cauchy cauchy;
+
         DNest4::RJObject<MyConditionalPrior> weights;
+        double sigma;
+
         Matrix weights_matrix;
 
         void make_weights_matrix();
-
         Vector calculate_output(const Vector& input) const;
 
 	public:
