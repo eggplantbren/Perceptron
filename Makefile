@@ -1,9 +1,9 @@
 #CFLAGS = -O2 -DARMA_NO_DEBUG -DNDEBUG -Wall -Wextra -ansi -pedantic
-CFLAGS = -m64 -O3 -flto -march=native -funroll-loops -DARMA_NO_DEBUG -DNDEBUG -Wall -Wextra -ansi -pedantic
-LIBS = -lrjobject -ldnest3 -lgsl -lgslcblas -lboost_thread -lboost_system
+CFLAGS = -std=c++11 -Wall -Wextra -pedantic
+LIBS = -ldnest4 -lpthread
 
 default:
-	g++ $(CFLAGS) -c *.cpp
-	g++ -o main *.o $(LIBS)
+	g++ -I$(DNEST4_PATH) $(CFLAGS) -c Data.cpp MyConditionalPrior.cpp
+#	g++ -o main *.o $(LIBS)
 	rm -f *.o
 
