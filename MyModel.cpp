@@ -1,6 +1,9 @@
 #include "MyModel.h"
 
-const DNest4::Cauchy MyModel::cauchy(0.0, 3.0);
+namespace Perceptron
+{
+
+const DNest4::Cauchy MyModel::cauchy(0.0, 5.0);
 
 MyModel::MyModel()
 :weights(1,
@@ -85,4 +88,6 @@ std::string MyModel::description() const
 {
     return std::string("");
 }
+
+} // namespace Perceptron
 

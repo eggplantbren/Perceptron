@@ -4,16 +4,22 @@
 #include "MyConditionalPrior.h"
 #include "Data.h"
 #include "DNest4/code/DNest4.h"
+#include "Anything.h"
+
+namespace Perceptron
+{
 
 class MyModel
 {
 	private:
         static const DNest4::Cauchy cauchy;
 
-        DNest4::RJObject<MyConditionalPrior> weights;
-        double sigma;
+        std::vector<Anything> input_scales, output_scales;
 
+        DNest4::RJObject<MyConditionalPrior> weights;
         Matrix weights_matrix;
+
+        double sigma;
 
         void make_weights_matrix();
         Vector calculate_output(const Vector& input) const;
@@ -37,6 +43,8 @@ class MyModel
 		// Return string with column information
 		std::string description() const;
 };
+
+} // namespace Perceptron
 
 #endif
 
