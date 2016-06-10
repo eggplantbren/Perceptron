@@ -14,6 +14,8 @@ class MyModel
 	private:
         static const DNest4::Cauchy cauchy;
 
+        // Account for "arbitrary" units of inputs and outputs
+        std::vector<Anything> input_locations, output_locations;
         std::vector<Anything> input_scales, output_scales;
 
         DNest4::RJObject<MyConditionalPrior> weights;
@@ -23,6 +25,7 @@ class MyModel
 
         void make_weights_matrix();
         Vector calculate_output(const Vector& input) const;
+        static double nonlinear_function(double x);
 
 	public:
         // Constructor

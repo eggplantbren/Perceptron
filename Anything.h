@@ -14,7 +14,7 @@ class Anything
 {
     private:
         double magnitude;
-        short sign;
+        double sign_control;
 
         // A Cauchy distribution will help
         static const DNest4::Cauchy cauchy;
