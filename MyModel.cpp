@@ -112,18 +112,27 @@ double MyModel::log_likelihood() const
 
 void MyModel::print(std::ostream& out) const
 {
-    for(const auto& x: input_locations)
-        out<<x.get_value()<<' ';
-    for(const auto& x: output_locations)
-        out<<x.get_value()<<' ';
+//    for(const auto& x: input_locations)
+//        out<<x.get_value()<<' ';
+//    for(const auto& x: output_locations)
+//        out<<x.get_value()<<' ';
 
-    for(const auto& x: input_scales)
-        out<<x.get_magnitude()<<' ';
-    for(const auto& x: output_scales)
-        out<<x.get_magnitude()<<' ';
+//    for(const auto& x: input_scales)
+//        out<<x.get_magnitude()<<' ';
+//    for(const auto& x: output_scales)
+//        out<<x.get_magnitude()<<' ';
 
-    weights.print(out);
-    out<<sigma<<' ';
+//    weights.print(out);
+//    out<<sigma<<' ';
+
+    Vector input(2);
+    for(int i=50; i<250; ++i)
+    {
+        input[0] = i;
+        input[1] = 10.0;
+        auto output = calculate_output(input);
+        out<<output(0)<<' ';
+    }
 }
 
 Vector MyModel::calculate_output(const Vector& input) const
