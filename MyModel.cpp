@@ -194,11 +194,7 @@ std::string MyModel::description() const
 
 double MyModel::nonlinear_function(double x)
 {
-    if(x < -1.0)
-        return -1.0;
-    if(x > 1.0)
-        return 1.0;
-    return x;
+    return tanh(x);
 }
 
 } // namespace Perceptron
