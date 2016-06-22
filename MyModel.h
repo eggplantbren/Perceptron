@@ -19,17 +19,17 @@ class MyModel
         std::vector<Anything> input_scales, output_scales;
 
         DNest4::RJObject<MyConditionalPrior> weights;
-        Matrix weights_matrix;
+        std::vector<Matrix> weights_matrices;
 
         double sigma;
 
-        void make_weights_matrix();
+        void make_weights_matrices();
         Vector calculate_output(const Vector& input) const;
         static double nonlinear_function(double x);
 
 	public:
         // Constructor
-		MyModel();
+		MyModel(const std::initializer_list<unsigned int>& num_hidden);
 
 		// Generate the point from the prior
 		void from_prior(DNest4::RNG& rng);

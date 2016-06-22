@@ -5,21 +5,33 @@ namespace Perceptron
 
 const DNest4::Cauchy MyModel::cauchy(0.0, 5.0);
 
-MyModel::MyModel()
+MyModel::MyModel(const std::initializer_list<unsigned int>& num_hidden)
 :input_locations(Data::get_instance().get_dim_inputs())
 ,output_locations(Data::get_instance().get_dim_outputs())
 ,input_scales(Data::get_instance().get_dim_inputs())
 ,output_scales(Data::get_instance().get_dim_outputs())
-,weights(1,
-         Data::get_instance().get_dim_outputs()*
-                Data::get_instance().get_dim_inputs(),
-         true,
-         MyConditionalPrior())
-,weights_matrix(Data::get_instance().get_dim_outputs(),
-                Data::get_instance().get_dim_inputs())
+,weights(1, 1, true, MyConditionalPrior()) // Placeholder
 {
+    // Number of nodes in each layer INCLUDING input and output layers
+    std::vector<size_t> num_nodes;
+    num_nodes.push_back(Data::get_instance().get_dim_inputs());
+    for(auto n: num_hidden)
+        num_nodes.push_back(n);
+    num_nodes.push_back(Data::get_instance().get_dim_outputs());
 
+    size_t num_weights=0; // Total number of weights needed
+    for(size_t i=1; i<num_nodes.size(); ++i)
+    {
+        weights_matrices.push_back(Matrix(num_nodes[i], num_nodes[i-1]));
+        num_weights += num_nodes[i]*num_nodes[i-1];
+    }
+
+    // Initialise weights object
+    weights = DNest4::RJObject<MyConditionalPrior>(1, num_weights,
+                                                true, MyConditionalPrior());
 }
+
+/*
 
 void MyModel::from_prior(DNest4::RNG& rng)
 {
@@ -173,6 +185,7 @@ double MyModel::nonlinear_function(double x)
         return 1.0;
     return x;
 }
+*/
 
 } // namespace Perceptron
 
