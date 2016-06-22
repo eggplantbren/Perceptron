@@ -31,7 +31,6 @@ MyModel::MyModel(const std::initializer_list<unsigned int>& num_hidden)
                                                 true, MyConditionalPrior());
 }
 
-/*
 
 void MyModel::from_prior(DNest4::RNG& rng)
 {
@@ -45,10 +44,11 @@ void MyModel::from_prior(DNest4::RNG& rng)
         x.from_prior(rng);
 
     weights.from_prior(rng);
-    make_weights_matrix();
+    make_weights_matrices();
 
     sigma = exp(cauchy.generate(rng));
 }
+
 
 double MyModel::perturb(DNest4::RNG& rng)
 {
@@ -77,7 +77,7 @@ double MyModel::perturb(DNest4::RNG& rng)
     else if(which == 4)
     {
         logH += weights.perturb(rng);
-        make_weights_matrix();
+        make_weights_matrices();
     }
     else
     {
@@ -89,16 +89,20 @@ double MyModel::perturb(DNest4::RNG& rng)
     return logH;
 }
 
-void MyModel::make_weights_matrix()
+void MyModel::make_weights_matrices()
 {
-    // Put weights in a matrix
+    // Put weights in matrices
     const auto& components = weights.get_components();
-    int k = 0;
-    for(int i=0; i<Data::get_instance().get_dim_outputs(); ++i)
-        for(int j=0; j<Data::get_instance().get_dim_inputs(); ++j)
-            weights_matrix(i, j) = components[k++][0];
-}
 
+    unsigned int index = 0;
+    for(auto& weights_matrix: weights_matrices)
+    {
+        for(int i=0; i<weights_matrix.rows(); ++i)
+            for(int j=0; j<weights_matrix.cols(); ++j)
+                weights_matrix(i, j) = components[index++][0];
+    }
+}
+/*
 double MyModel::log_likelihood() const
 {
     double logL = 0.0;
