@@ -5,6 +5,12 @@ namespace Perceptron
 
 const DNest4::Cauchy MyModel::cauchy(0.0, 5.0);
 
+MyModel::MyModel()
+:MyModel{static_cast<unsigned int>(Data::get_instance().get_dim_inputs())}
+{
+
+}
+
 MyModel::MyModel(const std::initializer_list<unsigned int>& num_hidden)
 :input_locations(Data::get_instance().get_dim_inputs())
 ,output_locations(Data::get_instance().get_dim_outputs())
@@ -102,7 +108,7 @@ void MyModel::make_weights_matrices()
                 weights_matrix(i, j) = components[index++][0];
     }
 }
-/*
+
 double MyModel::log_likelihood() const
 {
     double logL = 0.0;
@@ -162,9 +168,14 @@ Vector MyModel::calculate_output(const Vector& input) const
     }
 
     // Run the neural net on the standardized input
-    Vector result = weights_matrix*input;
-    for(int i=0; i<result.size(); ++i)
-        result[i] = nonlinear_function(result[i]);
+    Vector result;
+
+    for(size_t i=0; i<weights_matrices.size(); ++i)
+    {
+        result = weights_matrices[i]*input;
+        for(int j=0; j<result.size(); ++j)
+            result[j] = nonlinear_function(result[j]);
+    }
 
     // De-standardize the output
     for(int j=0; j<result.size(); ++j)
@@ -189,7 +200,6 @@ double MyModel::nonlinear_function(double x)
         return 1.0;
     return x;
 }
-*/
 
 } // namespace Perceptron
 

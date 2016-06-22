@@ -28,7 +28,8 @@ class MyModel
         static double nonlinear_function(double x);
 
 	public:
-        // Constructor
+        // Constructors
+        MyModel();
 		MyModel(const std::initializer_list<unsigned int>& num_hidden);
 
 		// Generate the point from the prior
