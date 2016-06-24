@@ -9,7 +9,7 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-    Data::get_instance().load("clocks.txt");
+    Data::get_instance().load("fake_data.txt");
     DNest4::start<MyModel>(argc, argv);
 	return 0;
 }

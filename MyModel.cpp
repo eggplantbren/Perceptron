@@ -6,7 +6,7 @@ namespace Perceptron
 const DNest4::Cauchy MyModel::cauchy(0.0, 5.0);
 
 MyModel::MyModel()
-:MyModel{static_cast<unsigned int>(Data::get_instance().get_dim_inputs())}
+:MyModel{10}
 {
 
 }
@@ -148,10 +148,10 @@ void MyModel::print(std::ostream& out) const
 //    out<<sigma<<' ';
 
     Vector input(2);
-    for(int i=50; i<250; ++i)
+    for(double x=-5.0; x<= 5.0000001; x += 0.01)
     {
-        input[0] = i;
-        input[1] = 10.0;
+        input[0] = x;
+        input[1] = 0.0;
         auto output = calculate_output(input);
         out<<output(0)<<' ';
     }
@@ -168,11 +168,11 @@ Vector MyModel::calculate_output(const Vector& input) const
     }
 
     // Run the neural net on the standardized input
-    Vector result;
+    Vector result = standardized_input;
 
     for(size_t i=0; i<weights_matrices.size(); ++i)
     {
-        result = weights_matrices[i]*input;
+        result = weights_matrices[i]*result;
         for(int j=0; j<result.size(); ++j)
             result[j] = nonlinear_function(result[j]);
     }
