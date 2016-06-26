@@ -6,7 +6,7 @@ namespace Perceptron
 const DNest4::Cauchy MyModel::cauchy(0.0, 5.0);
 
 MyModel::MyModel()
-:MyModel{10}
+:MyModel{5, 5, 5, 5}
 {
 
 }
@@ -82,7 +82,7 @@ double MyModel::perturb(DNest4::RNG& rng)
     }
     else if(which == 4)
     {
-        logH += weights.perturb(rng);
+        logH += weights.perturb(rng, false);
         make_weights_matrices();
     }
     else
