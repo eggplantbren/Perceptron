@@ -6,7 +6,7 @@ namespace Perceptron
 const DNest4::Cauchy MyModel::cauchy(0.0, 5.0);
 
 MyModel::MyModel()
-:MyModel{5, 5, 5, 5}
+:MyModel{10}
 {
 
 }
@@ -147,11 +147,10 @@ void MyModel::print(std::ostream& out) const
 //    weights.print(out);
 //    out<<sigma<<' ';
 
-    Vector input(2);
+    Vector input(1);
     for(double x=-5.0; x<= 5.0000001; x += 0.01)
     {
         input[0] = x;
-        input[1] = 0.0;
         auto output = calculate_output(input);
         out<<output(0)<<' ';
     }
