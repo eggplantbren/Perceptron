@@ -61,7 +61,7 @@ double MyModel::log_likelihood() const
         }
     }
 
-    if(isnan(logL) || isinf(logL))
+    if(std::isnan(logL) || std::isinf(logL))
         logL = -std::numeric_limits<double>::max();
 
     return logL;
