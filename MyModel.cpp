@@ -1,6 +1,5 @@
 #include "MyModel.h"
 #include <cmath>
-#include <limits>
 
 namespace Perceptron
 {
@@ -62,7 +61,7 @@ double MyModel::log_likelihood() const
     }
 
     if(std::isnan(logL) || std::isinf(logL))
-        logL = -std::numeric_limits<double>::max();
+        logL = -1E300;
 
     return logL;
 }
