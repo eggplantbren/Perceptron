@@ -1,4 +1,6 @@
 #include "MyModel.h"
+#include <cmath>
+#include <limits>
 
 namespace Perceptron
 {
@@ -58,6 +60,9 @@ double MyModel::log_likelihood() const
                     -0.5*pow(outputs[i][j] - result[j], 2)/var;
         }
     }
+
+    if(isnan(logL) || isinf(logL))
+        logL = -std::numeric_limits<double>::max();
 
     return logL;
 }
