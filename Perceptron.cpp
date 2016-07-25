@@ -58,31 +58,37 @@ double Perceptron::perturb(DNest4::RNG& rng)
 {
     double logH = 0.0;
 
-    int which = rng.rand_int(5);
+    if(rng.rand() <= 0.5)
+    {
+        int which = rng.rand_int(4);
 
-    if(which == 0)
-    {
-        logH += input_locations[rng.rand_int(input_locations.size())]
-                                .perturb(rng);
-    }
-    else if(which == 1)
-    {
-        logH += output_locations[rng.rand_int(output_locations.size())]
-                                .perturb(rng);
-    }
-    if(which == 2)
-    {
-        logH += input_scales[rng.rand_int(input_scales.size())].perturb(rng);
-    }
-    else if(which == 3)
-    {
-        logH += output_scales[rng.rand_int(output_scales.size())].perturb(rng);
+        if(which == 0)
+        {
+            logH += input_locations[rng.rand_int(input_locations.size())]
+                                    .perturb(rng);
+        }
+        else if(which == 1)
+        {
+            logH += output_locations[rng.rand_int(output_locations.size())]
+                                    .perturb(rng);
+        }
+        if(which == 2)
+        {
+            logH += input_scales[rng.rand_int(input_scales.size())]
+                                    .perturb(rng);
+        }
+        else
+        {
+            logH += output_scales[rng.rand_int(output_scales.size())]
+                                    .perturb(rng);
+        }
     }
     else
     {
         logH += weights.perturb(rng, false);
         make_weights_matrices();
     }
+
 
     return logH;
 }
@@ -117,7 +123,7 @@ void Perceptron::print(std::ostream& out) const
 //    out<<sigma<<' ';
 
     Vector input(1);
-    for(double x=-5.0; x<= 5.0000001; x += 0.01)
+    for(double x=-10.0; x<= 10.0000001; x += 0.01)
     {
         input[0] = x;
         auto output = calculate_output(input);
