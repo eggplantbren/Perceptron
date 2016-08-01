@@ -17,6 +17,7 @@ Perceptron::Perceptron(const std::initializer_list<unsigned int>& num_hidden)
 ,input_scales(Data::get_instance().get_dim_inputs())
 ,output_scales(Data::get_instance().get_dim_outputs())
 ,weights(1, 1, true, MyConditionalPrior()) // Placeholder
+,biases(1, 1, true, MyConditionalPrior())
 {
     // Number of nodes in each layer INCLUDING input and output layers
     std::vector<size_t> num_nodes;
@@ -25,15 +26,25 @@ Perceptron::Perceptron(const std::initializer_list<unsigned int>& num_hidden)
         num_nodes.push_back(n);
     num_nodes.push_back(Data::get_instance().get_dim_outputs());
 
-    size_t num_weights=0; // Total number of weights needed
+    // Calculate total number of weights and biases needed
+    size_t num_weights = 0;
     for(size_t i=1; i<num_nodes.size(); ++i)
     {
         weights_matrices.push_back(Matrix(num_nodes[i], num_nodes[i-1]));
         num_weights += num_nodes[i]*num_nodes[i-1];
     }
+    size_t num_biases = 0;
+    for(auto n: num_hidden)
+    {
+        bias_vectors.push_back(Vector(n));
+        num_biases += n;
+    }
 
     // Initialise weights object
     weights = DNest4::RJObject<MyConditionalPrior>(1, num_weights,
+                                                true, MyConditionalPrior());
+    // Initialise biases object
+    biases = DNest4::RJObject<MyConditionalPrior>(1, num_biases,
                                                 true, MyConditionalPrior());
 }
 
@@ -50,7 +61,10 @@ void Perceptron::from_prior(DNest4::RNG& rng)
         x.from_prior(rng);
 
     weights.from_prior(rng);
+    biases.from_prior(rng);
+
     make_weights_matrices();
+    make_bias_vectors();
 }
 
 
@@ -85,8 +99,16 @@ double Perceptron::perturb(DNest4::RNG& rng)
     }
     else
     {
-        logH += weights.perturb(rng, false);
-        make_weights_matrices();
+        if(rng.rand() <= 0.5)
+        {
+            logH += weights.perturb(rng, false);
+            make_weights_matrices();
+        }
+        else
+        {
+            logH += biases.perturb(rng, false);
+            make_bias_vectors();
+        }
     }
 
 
@@ -104,6 +126,19 @@ void Perceptron::make_weights_matrices()
         for(int i=0; i<weights_matrix.rows(); ++i)
             for(int j=0; j<weights_matrix.cols(); ++j)
                 weights_matrix(i, j) = components[index++][0];
+    }
+}
+
+void Perceptron::make_bias_vectors()
+{
+    // Put weights in matrices
+    const auto& components = biases.get_components();
+
+    unsigned int index = 0;
+    for(auto& vec: bias_vectors)
+    {
+        for(int i=0; i<vec.size(); ++i)
+            vec(i) = components[index++][0];
     }
 }
 
@@ -147,6 +182,9 @@ Vector Perceptron::calculate_output(const Vector& input) const
     for(size_t i=0; i<weights_matrices.size(); ++i)
     {
         result = weights_matrices[i]*result;
+        if(i != (weights_matrices.size() - 1))
+            result = result + bias_vectors[i];
+
         for(int j=0; j<result.size(); ++j)
             result[j] = nonlinear_function(result[j]);
     }

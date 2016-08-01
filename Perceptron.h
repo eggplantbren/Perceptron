@@ -19,9 +19,12 @@ class Perceptron
         std::vector<Anything> input_scales, output_scales;
 
         DNest4::RJObject<MyConditionalPrior> weights;
+        DNest4::RJObject<MyConditionalPrior> biases;
         std::vector<Matrix> weights_matrices;
+        std::vector<Vector> bias_vectors;
 
         void make_weights_matrices();
+        void make_bias_vectors();
         static double nonlinear_function(double x);
 
 	public:
