@@ -1,17 +1,22 @@
-from pylab import *
+import numpy as np
+import numpy.random as rng
+import matplotlib.pyplot as plt
 
-seed(0)
+rng.seed(0)
 
 # Some inputs
-N = 100
-x = 3*randn(N)
+N = 1000
+x = 5*rng.randn(N)
 
 # An output
-f = x - cos(x) + (0.1 + 0.1*abs(x))*randn(N)
+f = x - np.cos(x) + (0.1 + 0.1*np.abs(x))*rng.randn(N)
 f[x > 2] -= 5.0
-plot(x, f, "ko", markersize=3, alpha=0.2)
-savetxt('fake_data.txt', vstack([x, f]).T, header="1 1")
 
-show()
+# Save to file
+np.savetxt("fake_data.txt", np.vstack([x, f]).T, header="1 1")
 
+# Plot the data
+plt.figure(figsize=(13, 4))
+plt.plot(x, f, "ko", markersize=5, alpha=0.1)
+plt.show()
 
