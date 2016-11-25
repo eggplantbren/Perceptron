@@ -158,7 +158,7 @@ void Perceptron::print(std::ostream& out) const
 //    out<<sigma<<' ';
 
     Vector input(1);
-    for(double x=-10.0; x<= 10.0000001; x += 0.01)
+    for(double x=-20.0; x<= 20.0000001; x += 0.02)
     {
         input[0] = x;
         auto output = calculate_output(input);
