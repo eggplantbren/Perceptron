@@ -12,7 +12,12 @@ Anything::Anything()
 
 void Anything::from_prior(DNest4::RNG& rng)
 {
-    magnitude = exp(cauchy.generate(rng));
+    do
+    {
+        magnitude = cauchy.generate(rng);
+    }while(std::abs(magnitude) > 100.0);
+    magnitude = exp(magnitude);
+
     sign_control = -1.0 + 2*rng.rand();
 }
 
@@ -26,6 +31,8 @@ double Anything::perturb(DNest4::RNG& rng)
     {
         magnitude = log(magnitude);
         logH += cauchy.perturb(magnitude, rng);
+        if(std::abs(magnitude) > 100.0)
+            return -1E300;
         magnitude = exp(magnitude);
     }
     else
