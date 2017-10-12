@@ -5,7 +5,7 @@ namespace Perceptron
 {
 
 MyModel::MyModel()
-:MyModel{10}
+:MyModel{20, 10}
 {
 
 }
