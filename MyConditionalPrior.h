@@ -6,6 +6,7 @@
 class MyConditionalPrior:public DNest4::ConditionalPrior
 {
 	private:
+        double sigma;
 
 		double perturb_hyperparameters(DNest4::RNG& rng);
 

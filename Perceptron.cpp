@@ -12,12 +12,8 @@ Perceptron::Perceptron()
 }
 
 Perceptron::Perceptron(const std::initializer_list<unsigned int>& num_hidden)
-:input_locations(Data::get_instance().get_dim_inputs())
-,output_locations(Data::get_instance().get_dim_outputs())
-,input_scales(Data::get_instance().get_dim_inputs())
-,output_scales(Data::get_instance().get_dim_outputs())
-,weights(1, 1, true, MyConditionalPrior()) // Placeholder
-,biases(1, 1, true, MyConditionalPrior())
+:weights(1, 1, true, MyConditionalPrior()) // Placeholder
+,biases (1, 1, true, MyConditionalPrior())
 {
     // Number of nodes in each layer INCLUDING input and output layers
     std::vector<size_t> num_nodes;
@@ -33,12 +29,15 @@ Perceptron::Perceptron(const std::initializer_list<unsigned int>& num_hidden)
         weights_matrices.push_back(Matrix(num_nodes[i], num_nodes[i-1]));
         num_weights += num_nodes[i]*num_nodes[i-1];
     }
+
     size_t num_biases = 0;
     for(auto n: num_hidden)
     {
         bias_vectors.push_back(Vector(n));
         num_biases += n;
     }
+    bias_vectors.push_back(Vector(Data::get_instance().get_dim_outputs()));
+    num_biases += Data::get_instance().get_dim_outputs();
 
     // Initialise weights object
     weights = DNest4::RJObject<MyConditionalPrior>(1, num_weights,
@@ -51,15 +50,6 @@ Perceptron::Perceptron(const std::initializer_list<unsigned int>& num_hidden)
 
 void Perceptron::from_prior(DNest4::RNG& rng)
 {
-    for(auto& x: input_locations)
-        x.from_prior(rng);
-    for(auto& x: output_locations)
-        x.from_prior(rng);
-    for(auto& x: input_scales)
-        x.from_prior(rng);
-    for(auto& x: output_scales)
-        x.from_prior(rng);
-
     weights.from_prior(rng);
     biases.from_prior(rng);
 
@@ -74,43 +64,14 @@ double Perceptron::perturb(DNest4::RNG& rng)
 
     if(rng.rand() <= 0.5)
     {
-        int which = rng.rand_int(4);
-
-        if(which == 0)
-        {
-            logH += input_locations[rng.rand_int(input_locations.size())]
-                                    .perturb(rng);
-        }
-        else if(which == 1)
-        {
-            logH += output_locations[rng.rand_int(output_locations.size())]
-                                    .perturb(rng);
-        }
-        if(which == 2)
-        {
-            logH += input_scales[rng.rand_int(input_scales.size())]
-                                    .perturb(rng);
-        }
-        else
-        {
-            logH += output_scales[rng.rand_int(output_scales.size())]
-                                    .perturb(rng);
-        }
+        logH += weights.perturb(rng);
+        make_weights_matrices();
     }
     else
     {
-        if(rng.rand() <= 0.5)
-        {
-            logH += weights.perturb(rng, false);
-            make_weights_matrices();
-        }
-        else
-        {
-            logH += biases.perturb(rng, false);
-            make_bias_vectors();
-        }
+        logH += biases.perturb(rng);
+        make_bias_vectors();
     }
-
 
     return logH;
 }
@@ -168,32 +129,19 @@ void Perceptron::print(std::ostream& out) const
 
 Vector Perceptron::calculate_output(const Vector& input) const
 {
-    // Standardize the input of the example
-    Vector standardized_input = input;
-    for(int j=0; j<standardized_input.size(); ++j)
-    {
-        standardized_input[j] -= input_locations[j].get_value();
-        standardized_input[j] /= input_scales[j].get_magnitude();
-    }
-
-    // Run the neural net on the standardized input
-    Vector result = standardized_input;
+    // Apply the neural net function on the input
+    Vector result = input;
 
     for(size_t i=0; i<weights_matrices.size(); ++i)
     {
-        result = weights_matrices[i]*result;
-        if(i != (weights_matrices.size() - 1))
-            result = result + bias_vectors[i];
+        result = weights_matrices[i]*result + bias_vectors[i];
 
-        for(int j=0; j<result.size(); ++j)
-            result[j] = nonlinear_function(result[j]);
-    }
-
-    // De-standardize the output
-    for(int j=0; j<result.size(); ++j)
-    {
-        result[j] *= output_scales[j].get_magnitude();
-        result[j] += output_locations[j].get_value();
+        // Apply the nonlinear function unless this is the output layer
+        if(i != (weights_matrices.size() -1))
+        {
+            for(int j=0; j<result.size(); ++j)
+                result[j] = nonlinear_function(result[j]);
+        }
     }
 
     return result;
@@ -206,7 +154,7 @@ std::string Perceptron::description() const
 
 double Perceptron::nonlinear_function(double x)
 {
-    return tanh(x);
+    return (x < 0.0)?(0.0):(x);
 }
 
 } // namespace Perceptron

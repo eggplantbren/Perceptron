@@ -14,7 +14,6 @@ class MyModel
 {
 	private:
         Perceptron mean;
-        Perceptron log_sig;
 
 	public:
         // Constructors

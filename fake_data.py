@@ -9,7 +9,7 @@ N = 1000
 x = 5*rng.randn(N)
 
 # An output
-f = x - np.cos(x) + (0.1 + 0.1*np.abs(x))*rng.randn(N)
+f = x - np.cos(x) + rng.randn(N)
 f[x > 2] -= 5.0
 
 # Save to file
