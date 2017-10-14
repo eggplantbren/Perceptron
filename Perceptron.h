@@ -14,17 +14,13 @@ class Perceptron
 	private:
         static const DNest4::Cauchy cauchy;
 
-        // Account for "arbitrary" units of inputs and outputs
-        std::vector<Anything> input_locations, output_locations;
-        std::vector<Anything> input_scales, output_scales;
-
-        DNest4::RJObject<MyConditionalPrior> weights;
-        DNest4::RJObject<MyConditionalPrior> biases;
+        std::vector<DNest4::RJObject<MyConditionalPrior>> weights;
+        std::vector<DNest4::RJObject<MyConditionalPrior>> biases;
         std::vector<Matrix> weights_matrices;
         std::vector<Vector> bias_vectors;
 
-        void make_weights_matrices();
-        void make_bias_vectors();
+        void make_weights_matrix(size_t which);
+        void make_bias_vector(size_t which);
         static double nonlinear_function(double x);
 
 	public:

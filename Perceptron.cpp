@@ -12,8 +12,6 @@ Perceptron::Perceptron()
 }
 
 Perceptron::Perceptron(const std::initializer_list<unsigned int>& num_hidden)
-:weights(1, 1, true, MyConditionalPrior()) // Placeholder
-,biases (1, 1, true, MyConditionalPrior())
 {
     // Number of nodes in each layer INCLUDING input and output layers
     std::vector<size_t> num_nodes;
@@ -26,6 +24,8 @@ Perceptron::Perceptron(const std::initializer_list<unsigned int>& num_hidden)
     size_t num_weights = 0;
     for(size_t i=1; i<num_nodes.size(); ++i)
     {
+        weights.push_back(DNest4::RJObject<MyConditionalPrior>(1,
+                      num_nodes[i]*num_nodes[i-1], true, MyConditionalPrior()));
         weights_matrices.push_back(Matrix(num_nodes[i], num_nodes[i-1]));
         num_weights += num_nodes[i]*num_nodes[i-1];
     }
@@ -33,28 +33,32 @@ Perceptron::Perceptron(const std::initializer_list<unsigned int>& num_hidden)
     size_t num_biases = 0;
     for(auto n: num_hidden)
     {
+        biases.push_back(DNest4::RJObject<MyConditionalPrior>(1, n, true,
+                                            MyConditionalPrior()));
         bias_vectors.push_back(Vector(n));
         num_biases += n;
     }
+    biases.push_back(DNest4::RJObject<MyConditionalPrior>(1,
+                                Data::get_instance().get_dim_outputs(), true,
+                                            MyConditionalPrior()));
     bias_vectors.push_back(Vector(Data::get_instance().get_dim_outputs()));
     num_biases += Data::get_instance().get_dim_outputs();
-
-    // Initialise weights object
-    weights = DNest4::RJObject<MyConditionalPrior>(1, num_weights,
-                                                true, MyConditionalPrior());
-    // Initialise biases object
-    biases = DNest4::RJObject<MyConditionalPrior>(1, num_biases,
-                                                true, MyConditionalPrior());
 }
 
 
 void Perceptron::from_prior(DNest4::RNG& rng)
 {
-    weights.from_prior(rng);
-    biases.from_prior(rng);
+    for(size_t i=0; i<weights.size(); ++i)
+    {
+        weights[i].from_prior(rng);
+        make_weights_matrix(i);
+    }
 
-    make_weights_matrices();
-    make_bias_vectors();
+    for(size_t i=0; i<biases.size(); ++i)
+    {
+        biases[i].from_prior(rng);
+        make_bias_vector(i);
+    }
 }
 
 
@@ -64,43 +68,41 @@ double Perceptron::perturb(DNest4::RNG& rng)
 
     if(rng.rand() <= 0.5)
     {
-        logH += weights.perturb(rng);
-        make_weights_matrices();
+        size_t which = rng.rand_int(weights.size());
+        logH += weights[which].perturb(rng);
+        make_weights_matrix(which);
     }
     else
     {
-        logH += biases.perturb(rng);
-        make_bias_vectors();
+        size_t which = rng.rand_int(biases.size());
+        logH += biases[which].perturb(rng);
+        make_bias_vector(which);
     }
 
     return logH;
 }
 
-void Perceptron::make_weights_matrices()
+void Perceptron::make_weights_matrix(size_t which)
 {
-    // Put weights in matrices
-    const auto& components = weights.get_components();
+    // Put weights into a matrix
+    const auto& components = weights[which].get_components();
+    auto& weights_matrix = weights_matrices[which];
 
     unsigned int index = 0;
-    for(auto& weights_matrix: weights_matrices)
-    {
-        for(int i=0; i<weights_matrix.rows(); ++i)
-            for(int j=0; j<weights_matrix.cols(); ++j)
-                weights_matrix(i, j) = components[index++][0];
-    }
+    for(int i=0; i<weights_matrix.rows(); ++i)
+        for(int j=0; j<weights_matrix.cols(); ++j)
+            weights_matrix(i, j) = components[index++][0];
 }
 
-void Perceptron::make_bias_vectors()
+void Perceptron::make_bias_vector(size_t which)
 {
     // Put weights in matrices
-    const auto& components = biases.get_components();
+    const auto& components = biases[which].get_components();
+    auto& bias_vector = bias_vectors[which];
 
     unsigned int index = 0;
-    for(auto& vec: bias_vectors)
-    {
-        for(int i=0; i<vec.size(); ++i)
-            vec(i) = components[index++][0];
-    }
+    for(int i=0; i<bias_vector.size(); ++i)
+        bias_vector(i) = components[index++][0];
 }
 
 void Perceptron::print(std::ostream& out) const
