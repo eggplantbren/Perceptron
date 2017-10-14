@@ -1,6 +1,7 @@
 #ifndef Perceptron_MyConditionalPrior
 #define Perceptron_MyConditionalPrior
 
+#include "Anything.h"
 #include "DNest4/code/DNest4.h"
 
 namespace Perceptron
@@ -9,6 +10,7 @@ namespace Perceptron
 class MyConditionalPrior:public DNest4::ConditionalPrior
 {
 	private:
+        Anything mu;
         double sigma;
 
 		double perturb_hyperparameters(DNest4::RNG& rng);

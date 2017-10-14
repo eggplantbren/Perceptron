@@ -14,6 +14,8 @@ MyConditionalPrior::MyConditionalPrior()
 
 void MyConditionalPrior::from_prior(RNG& rng)
 {
+    mu.from_prior(rng);
+
     const Cauchy cauchy(0.0, 5.0);
     do
     {
@@ -24,37 +26,44 @@ void MyConditionalPrior::from_prior(RNG& rng)
 
 double MyConditionalPrior::perturb_hyperparameters(RNG& rng)
 {
-    const Cauchy cauchy(0.0, 5.0);
-
 	double logH = 0.0;
 
-    sigma = log(sigma);
-    logH += cauchy.perturb(sigma, rng);
-    if(std::abs(sigma) >= 50.0)
+    if(rng.rand() <= 0.5)
     {
-        sigma = 1.0;
-        return -1E300;
+        logH += mu.perturb(rng);
     }
-    sigma = exp(sigma);
+    else
+    {
+        const Cauchy cauchy(0.0, 5.0);
+
+        sigma = log(sigma);
+        logH += cauchy.perturb(sigma, rng);
+        if(std::abs(sigma) >= 50.0)
+        {
+            sigma = 1.0;
+            return -1E300;
+        }
+        sigma = exp(sigma);
+    }
 
 	return logH;
 }
 
 double MyConditionalPrior::log_pdf(const std::vector<double>& vec) const
 {
-    Laplace l(0, sigma);
+    Laplace l(mu.get_value(), sigma);
 	return l.log_pdf(vec[0]);
 }
 
 void MyConditionalPrior::from_uniform(std::vector<double>& vec) const
 {
-    Laplace l(0, sigma);
+    Laplace l(mu.get_value(), sigma);
     vec[0] = l.cdf_inverse(vec[0]);
 }
 
 void MyConditionalPrior::to_uniform(std::vector<double>& vec) const
 {
-    Laplace l(0, sigma);
+    Laplace l(mu.get_value(), sigma);
     vec[0] = l.cdf(vec[0]);
 }
 
