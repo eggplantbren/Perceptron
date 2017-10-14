@@ -4,6 +4,9 @@
 
 using namespace DNest4;
 
+namespace Perceptron
+{
+
 MyConditionalPrior::MyConditionalPrior()
 {
 
@@ -59,4 +62,6 @@ void MyConditionalPrior::print(std::ostream& out) const
 {
 
 }
+
+} // namespace Perceptron
 

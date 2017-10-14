@@ -3,6 +3,9 @@
 
 #include "DNest4/code/DNest4.h"
 
+namespace Perceptron
+{
+
 class MyConditionalPrior:public DNest4::ConditionalPrior
 {
 	private:
@@ -22,6 +25,8 @@ class MyConditionalPrior:public DNest4::ConditionalPrior
 		void print(std::ostream& out) const;
 		static const int weight_parameter = 1;
 };
+
+} // namespace Perceptron
 
 #endif
 
