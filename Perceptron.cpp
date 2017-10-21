@@ -3,12 +3,6 @@
 namespace Perceptron
 {
 
-Perceptron::Perceptron()
-:Perceptron{10}
-{
-
-}
-
 Perceptron::Perceptron(const std::initializer_list<unsigned int>& num_hidden)
 {
     // Number of nodes in each layer INCLUDING input and output layers

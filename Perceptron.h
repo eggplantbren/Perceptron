@@ -22,8 +22,7 @@ class Perceptron
         static double nonlinear_function(double x);
 
 	public:
-        // Constructors
-        Perceptron();
+
 		Perceptron(const std::initializer_list<unsigned int>& num_hidden);
 
 		// Generate the point from the prior
