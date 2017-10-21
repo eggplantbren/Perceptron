@@ -3,8 +3,6 @@
 namespace Perceptron
 {
 
-const DNest4::Cauchy Perceptron::cauchy(0.0, 5.0);
-
 Perceptron::Perceptron()
 :Perceptron{10}
 {

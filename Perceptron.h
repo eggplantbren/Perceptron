@@ -12,8 +12,6 @@ namespace Perceptron
 class Perceptron
 {
 	private:
-        static const DNest4::Cauchy cauchy;
-
         std::vector<DNest4::RJObject<MyConditionalPrior>> weights;
         std::vector<DNest4::RJObject<MyConditionalPrior>> biases;
         std::vector<Matrix> weights_matrices;
