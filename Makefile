@@ -1,7 +1,7 @@
 #CFLAGS = -O2 -DARMA_NO_DEBUG -DNDEBUG -Wall -Wextra -ansi -pedantic
 DNEST4_PATH=/home/brewer/Projects
 EIGEN_PATH=/usr/include/eigen3
-CFLAGS = -std=c++11 -O3 -Wall -pedantic
+CFLAGS = -std=c++11 -O3 -Wall -pedantic -march=native
 LIBS = -ldnest4 -lpthread
 
 default:
